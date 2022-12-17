@@ -29,16 +29,26 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
-import { useVuelidate } from '@vuelidate/core'
+import { reactive, computed, watchEffect, ref } from 'vue';
+import useVuelidate from '@vuelidate/core'
 import { required, minLength, email, helpers } from '@vuelidate/validators'
 import { useAuthStore } from '../stores/authStore'
-
+import { useRouter } from "vue-router"
+ 
 const authStore = useAuthStore()
-
+const router = useRouter()
+const error = ref("")
 const formData = reactive({
     email: "",
     password: "",
+})
+
+const token = ref("")
+watchEffect(() => {
+    token.value = authStore.user
+    if(token.value){
+        router.push("/home")
+    }
 })
 
 const rules = computed(() => {
@@ -53,8 +63,8 @@ const handleSubmit = async () => {
     if(result){
         try {
             authStore.login(formData.email, formData.password)
-        } catch (error) {
-            error.value = error.message;
+        } catch (err) {
+            error.value = err.message;
             setTimeout(() => {
                 error.value = ""
             }, 2000)            

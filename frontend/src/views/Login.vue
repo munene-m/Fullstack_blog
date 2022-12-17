@@ -52,7 +52,7 @@ const handleSubmit = async () => {
     const result = await v$.value.$validate()
     if(result){
         try {
-            
+            authStore.login(formData.email, formData.password)
         } catch (error) {
             error.value = error.message;
             setTimeout(() => {
@@ -60,5 +60,9 @@ const handleSubmit = async () => {
             }, 2000)            
         }
     }
+    setTimeout(() => {
+       formData.email = "",
+       formData.password = ""
+    }, 1000);
 }
 </script>

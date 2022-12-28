@@ -41,8 +41,10 @@ import { reactive, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core'
 import { required, sameAs, minLength, email, helpers } from '@vuelidate/validators'
 import { useAuthStore } from '../stores/authStore'
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 const formData = reactive({
     username: "",
@@ -50,6 +52,7 @@ const formData = reactive({
     password: "",
     confirmPassword: ""
 })
+
 const rules = computed(() => {
     return{
         username: { required: helpers.withMessage("Username is required", required) },
@@ -63,6 +66,7 @@ const handleSubmit = async () =>{
     const result = await v$.value.$validate()
     if(result){
         authStore.register(formData.username, formData.email, formData.password)
+        router.push("/login")
     }
     setTimeout(() => {
         formData.username = "",
